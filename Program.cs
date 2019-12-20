@@ -8,36 +8,32 @@ namespace DialougeCreator
     {
         static void Main(string[] args)
         {
-            DialougeManager manager = new DialougeManager();
-            DialogueOptions starting = manager.startingDialouge;
-            Conversation convo = new Conversation("derek", starting);
+            DialogueManager manager = new DialogueManager();
+            DialogueNode starting = manager.startingDialouge;
+            Conversation convo = new Conversation(new string[] { "derek", "player" }, starting);
 
             while (!convo.conversationEnded)
             {
-                if (convo.currentDialouge.options.Count > 1)
+                if (convo.GetDialogueType() == "Options")
                 {
-                    Node[] nodes = new Node[100];
+                    Dialogue[] nodes = new Dialogue[100];
                     int i = 1;
-                    foreach (KeyValuePair<string, Node> option in convo.currentDialouge.options)
+                    foreach (KeyValuePair<string, Dialogue> option in convo.GetCurrentOptions())
                     {
-                        Console.WriteLine(option.Key);
+                        Console.WriteLine(i + ": " + option.Key);
                         nodes[i] = option.Value;
                         i++;
                     }
                     Console.WriteLine("-----------------------------------------------");
                     int selection = int.Parse(Console.ReadLine());
                     Console.WriteLine("-----------------------------------------------");
-                    Console.WriteLine(nodes[selection].phrase);
+                    Console.WriteLine("You: " + nodes[selection].phrase);
                     Console.WriteLine("-----------------------------------------------");
                     convo.ChooseOption(nodes[selection]);
                 }
                 else
                 {
-                    foreach (KeyValuePair<string, Node> option in convo.currentDialouge.options)
-                    {
-                        Console.WriteLine(option.Key);
-                        convo.ContinueConversaton(option.Value);
-                    }
+                    Console.WriteLine(convo.GetCurrentSpeaker() + ": " + convo.ContinueConversaton());
                     Console.WriteLine("-----------------------------------------------");
                 }
             }
