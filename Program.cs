@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using DialogueSystem;
 
 namespace DialougeCreator
 {
@@ -14,11 +15,12 @@ namespace DialougeCreator
 
             while (!convo.conversationEnded)
             {
-                if (convo.GetDialogueType() == "Options")
+                if (convo.CurrentDialouge.GetType() == (typeof(DialogueOptions)))
                 {
+                    DialogueOptions newDialogue = (DialogueOptions)convo.CurrentDialouge;
                     Dialogue[] nodes = new Dialogue[100];
                     int i = 1;
-                    foreach (KeyValuePair<string, Dialogue> option in convo.GetCurrentOptions())
+                    foreach (KeyValuePair<string, Dialogue> option in newDialogue.Options)
                     {
                         Console.WriteLine(i + ": " + option.Key);
                         nodes[i] = option.Value;
@@ -27,7 +29,7 @@ namespace DialougeCreator
                     Console.WriteLine("-----------------------------------------------");
                     int selection = int.Parse(Console.ReadLine());
                     Console.WriteLine("-----------------------------------------------");
-                    Console.WriteLine("You: " + nodes[selection].phrase);
+                    Console.WriteLine(convo.GetCurrentSpeaker() + ": " + nodes[selection].phrase);
                     Console.WriteLine("-----------------------------------------------");
                     convo.ChooseOption(nodes[selection]);
                 }
